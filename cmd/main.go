@@ -1,9 +1,9 @@
 package main
 
 import (
-	"mygoapp/internal/invoice"
+	"mygoapp/internal/window"
 )
 
 func main() {
-	invoice.RunUI()
+	window.RunUI()
 }
