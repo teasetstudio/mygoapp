@@ -1,6 +1,8 @@
 package window
 
 import (
+	"mygoapp/internal/invoice"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
@@ -19,9 +21,10 @@ func RunUI() {
 }
 
 func getTabs() *container.AppTabs {
+	invoice := invoice.GetInvoiceContainer()
 	tabs := container.NewAppTabs(
-		container.NewTabItem("Invoice", widget.NewLabel("Hello")),
-		container.NewTabItem("Tab 2", widget.NewLabel("World!")),
+		container.NewTabItem("Invoice", invoice),
+		container.NewTabItem("Hello", widget.NewLabel("World!")),
 	)
 
 	tabs.SetTabLocation(container.TabLocationLeading)
