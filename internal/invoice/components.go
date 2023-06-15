@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"mygoapp/internal/config"
+	"mygoapp/internal/email"
 	"mygoapp/internal/scrap"
 	"os"
 	"path/filepath"
@@ -65,21 +66,7 @@ func RenameInvoiceContainer() *fyne.Container {
 		}
 
 		scrap.GetInvoice(invoiceDate, downloadFilePath)
-
-		// err := os.Rename(downloadedFilePath, newFileInput.Text)
-		// if os.IsNotExist(err) {
-		// 	log.Println("Error: File not found")
-		// }
-		// if os.IsExist(err) {
-		// 	log.Println("Error: File already exists")
-		// }
-		// if err != nil && !os.IsNotExist(err) && !os.IsExist(err) {
-		// 	log.Println(err)
-		// }
-		// if err == nil {
-		// 	log.Println("Success: File renamed")
-		// }
-		// email.SendEmailWithFile(newFileInput.Text)
+		email.SendFile(downloadFilePath)
 	})
 	btnWrapper := container.New(layout.NewCenterLayout(), btn)
 

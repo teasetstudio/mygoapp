@@ -1,101 +1,139 @@
 package email
 
 import (
-	"bytes"
+	"crypto/tls"
+	"encoding/base64"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
-	"mime/multipart"
+	"mygoapp/internal/config"
 	"net/smtp"
-	"net/textproto"
+	"os"
 	"path/filepath"
 )
 
-func SendEmailWithFile(filePath string) {
-	// Sender's email address and password
-	senderEmail := "ivocabulary9000@gmail.com"
-	senderPassword := "ohfnffkbyiesjcda"
+// The function you provided appears to have the necessary components to send an email with
+// a PDF attachment. However, there is a problem with the way you include the file content
+// in the email message.
 
-	// Recipient's email address
-	recipientEmail := "i.tichkevitch@godeltech.com"
+// In the current code, you're directly including the byte content of the PDF file in the
+// message string using the %s format specifier. This will not work as expected since the
+// content may contain special characters that can interfere with the email message formatting.
 
+// To fix this issue, you should encode the file content using the appropriate encoding
+// method. In this case, you can use base64 encoding to ensure proper representation of
+// the PDF file content in the email message. Here's an updated version of your function
+// that incorporates base64 encoding:
+
+// In this updated version, I've made changes to properly encode the PDF file content using
+// base64.StdEncoding.EncodeToString. This ensures that the attachment is correctly represented
+// in the email message.
+
+func SendFile(filePath string) {
 	// SMTP server configuration
 	smtpHost := "smtp.gmail.com"
 	smtpPort := 587
+	smtpUsername := config.User.SenderEmail
+	smtpPassword := config.User.SenderPassword
 
-	// Message details
-	messageSubject := "Test Email with Attachment"
-	messageBody := "This is a test email with an attachment."
-
-	// Read the file content
-	fileContent, err := ioutil.ReadFile(filePath)
-	if err != nil {
-		log.Fatal("Error reading file:", err)
-	}
-
-	// Create a new message with attachment
-	message := createMessageWithAttachment(senderEmail, recipientEmail, messageSubject, messageBody, filePath, fileContent)
-
-	// SMTP authentication and connection
-	auth := smtp.PlainAuth("", senderEmail, senderPassword, smtpHost)
-	smtpAddress := fmt.Sprintf("%s:%d", smtpHost, smtpPort)
-
-	// Send the email
-	err = smtp.SendMail(smtpAddress, auth, senderEmail, []string{recipientEmail}, message)
-	if err != nil {
-		log.Fatal("Error sending email:", err)
-	}
-
-	fmt.Println("Email sent successfully.")
-}
-
-func createMessageWithAttachment(senderEmail, recipientEmail, subject, body, filePath string, fileContent []byte) []byte {
-	buf := new(bytes.Buffer)
-	writer := multipart.NewWriter(buf)
-
-	// Create the main email body
-	header := make(textproto.MIMEHeader)
-	header.Set("Content-Type", "text/plain; charset=utf-8")
-	bodyPart, err := writer.CreatePart(header)
-	if err != nil {
-		log.Fatal("Error creating email body:", err)
-	}
-	bodyPart.Write([]byte(body))
-
-	// Create the attachment
-	header = make(textproto.MIMEHeader)
-	header.Set("Content-Type", getMimeType(filePath))
-	header.Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, filepath.Base(filePath)))
-	attachmentPart, err := writer.CreatePart(header)
-	if err != nil {
-		log.Fatal("Error creating attachment:", err)
-	}
-	attachmentPart.Write(fileContent)
-
-	// Close the multipart writer
-	writer.Close()
+	// Sender and recipient email addresses
+	from := config.User.SenderEmail
+	to := config.User.RecipientEmail
 
 	// Create the email message
-	message := []byte(fmt.Sprintf("From: %s\r\nTo: %s\r\nSubject: %s\r\nMIME-Version: 1.0\r\nContent-Type: multipart/mixed; boundary=%s\r\n\r\n%s",
-		senderEmail, recipientEmail, subject, writer.Boundary(), buf.Bytes()))
+	subject := "Email with PDF attachment"
+	body := "Please find the attached PDF file."
+	attachmentPath := filePath
 
-	return message
-}
-
-func getMimeType(filePath string) string {
-	extension := filepath.Ext(filePath)
-	switch extension {
-	case ".txt":
-		return "text/plain"
-	case ".pdf":
-		return "application/pdf"
-	case ".doc", ".docx":
-		return "application/msword"
-	case ".jpg", ".jpeg":
-		return "image/jpeg"
-	case ".png":
-		return "image/png"
-	default:
-		return "application/octet-stream"
+	// Read the file content
+	file, err := os.Open(attachmentPath)
+	if err != nil {
+		log.Fatal(err)
 	}
+	defer file.Close()
+
+	content, err := io.ReadAll(file)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Create the message parts
+	header := make(map[string]string)
+	header["From"] = from
+	header["To"] = to
+	header["Subject"] = subject
+
+	message := ""
+
+	for k, v := range header {
+		message += fmt.Sprintf("%s: %s\r\n", k, v)
+	}
+
+	// Create the MIME parts
+	boundary := "boundary"
+
+	message += fmt.Sprintf("MIME-Version: 1.0\r\n"+
+		"Content-Type: multipart/mixed; boundary=%s\r\n"+
+		"\r\n"+
+		"--%s\r\n"+
+		"Content-Type: text/plain; charset=utf-8\r\n"+
+		"\r\n"+
+		"%s\r\n"+
+		"\r\n"+
+		"--%s\r\n"+
+		"Content-Type: application/pdf\r\n"+
+		"Content-Disposition: attachment; filename=%s\r\n"+
+		"Content-Transfer-Encoding: base64\r\n"+
+		"\r\n"+
+		"%s\r\n"+
+		"--%s--\r\n",
+		boundary, boundary, body, boundary, filepath.Base(attachmentPath), base64.StdEncoding.EncodeToString(content), boundary)
+
+	// SMTP authentication setup
+	auth := smtp.PlainAuth("", smtpUsername, smtpPassword, smtpHost)
+
+	// Connect to the SMTP server
+	client, err := smtp.Dial(fmt.Sprintf("%s:%d", smtpHost, smtpPort))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer client.Close()
+
+	// Enable TLS encryption
+	tlsConfig := &tls.Config{
+		InsecureSkipVerify: true, // Use this if you're unable to specify ServerName
+		// ServerName:         "smtp.example.com", // Uncomment and provide the correct server name if available
+	}
+
+	// Start the SMTP connection
+	if err = client.StartTLS(tlsConfig); err != nil {
+		log.Fatal(err)
+	}
+
+	// Authenticate with the server
+	if err = client.Auth(auth); err != nil {
+		log.Fatal(err)
+	}
+
+	// Set the sender and recipient
+	if err = client.Mail(from); err != nil {
+		log.Fatal(err)
+	}
+	if err = client.Rcpt(to); err != nil {
+		log.Fatal(err)
+	}
+
+	// Send the email message
+	wc, err := client.Data()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer wc.Close()
+
+	_, err = wc.Write([]byte(message))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("Email sent successfully!")
 }
