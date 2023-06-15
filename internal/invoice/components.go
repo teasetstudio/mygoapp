@@ -1,10 +1,13 @@
 package invoice
 
 import (
+	"fmt"
 	"log"
 	"mygoapp/internal/config"
+	"mygoapp/internal/email"
 	"mygoapp/internal/scrap"
 	"os"
+	"path/filepath"
 	"runtime"
 	"strconv"
 	"time"
@@ -14,20 +17,6 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 )
-
-// func FormContainer() *fyne.Container {
-// 	label1 := widget.NewLabel("Label 1")
-// 	input1 := widget.NewEntry()
-// 	input1.SetPlaceHolder("Enter text...")
-
-// 	label2 := widget.NewLabel("Label 2")
-// 	input2 := widget.NewEntry()
-// 	input2.SetPlaceHolder("Enter text...")
-
-// 	form := container.New(layout.NewFormLayout(), label1, input1, label2, input2)
-
-// 	return form
-// }
 
 func DefaultFolderSetup() {
 	if runtime.GOOS == "windows" {
@@ -51,10 +40,12 @@ func DefaultFolderSetup() {
 }
 
 func RenameInvoiceContainer() *fyne.Container {
-	date := getInvoiceDate()
+	date, year, month, monthStr := getInvoiceDate()
 	DefaultFolderSetup()
-	// download := config.DownloadDir + "\\faktura-vat-" + date + ".pdf"
-	newFile := config.DownloadDir + "\\May Godel Invoice I.Tichkevitch.pdf"
+
+	monthFolderName := month + " " + monthStr
+	newFileFolder := config.BusinessDir + "\\" + year + "\\" + monthFolderName + "\\" + "invoices"
+	newFile := newFileFolder + "\\" + monthStr + " Godel Invoice I.Tichkevitch.pdf"
 
 	invoiceDateLabel := widget.NewLabel("Invoice date")
 	invoiceDateInput := widget.NewEntry()
@@ -72,10 +63,12 @@ func RenameInvoiceContainer() *fyne.Container {
 
 	btn := widget.NewButton("Save", func() {
 		invoiceDate := invoiceDateInput.Text
-		downloadedFilePath := scrap.Start(invoiceDate)
+		downloadedFilePath := scrap.GetInvoice(invoiceDate)
 
-		println(downloadedFilePath)
-		println(newFileInput.Text)
+		errr := os.MkdirAll(filepath.Dir(newFileInput.Text), 0755)
+		if errr != nil {
+			fmt.Println("Error creating directory:", errr)
+		}
 		err := os.Rename(downloadedFilePath, newFileInput.Text)
 		if os.IsNotExist(err) {
 			log.Println("Error: File not found")
@@ -89,6 +82,7 @@ func RenameInvoiceContainer() *fyne.Container {
 		if err == nil {
 			log.Println("Success: File renamed")
 		}
+		email.SendEmailWithFile(newFileInput.Text)
 	})
 	btnWrapper := container.New(layout.NewCenterLayout(), btn)
 
@@ -96,7 +90,7 @@ func RenameInvoiceContainer() *fyne.Container {
 	return grid
 }
 
-func getInvoiceDate() string {
+func getInvoiceDate() (string, string, string, string) {
 	year, month, _ := time.Now().Date()
 
 	lastDayOfMonth := daysIn(month, year)
@@ -110,7 +104,7 @@ func getInvoiceDate() string {
 		}
 	}()
 
-	return strconv.Itoa(lastDayOfMonth) + "-" + mon + "-" + strconv.Itoa(year)
+	return strconv.Itoa(lastDayOfMonth) + "-" + mon + "-" + strconv.Itoa(year), strconv.Itoa(int(year)), stringMonth, month.String()
 }
 
 func daysIn(m time.Month, year int) int {

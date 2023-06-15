@@ -24,7 +24,7 @@ func getTabs() *container.AppTabs {
 	invoice := invoice.GetInvoiceContainer()
 	tabs := container.NewAppTabs(
 		container.NewTabItem("Invoice", invoice),
-		container.NewTabItem("Hello", widget.NewLabel("World!")),
+		container.NewTabItem("Config", widget.NewLabel("save json config and edit it here!")),
 	)
 
 	tabs.SetTabLocation(container.TabLocationLeading)

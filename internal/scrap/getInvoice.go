@@ -9,22 +9,12 @@ import (
 	"github.com/mxschmitt/playwright-go"
 )
 
-func Start(invoiceDate string) string {
-	pw, err := playwright.Run(&playwright.RunOptions{Browsers: []string{"chromium"}})
+func fakturowoLogin(page playwright.Page) {
+	_, err := page.Goto("https://www.fakturowo.pl/logowanie", playwright.PageGotoOptions{Timeout: playwright.Float(100000)})
 	if err != nil {
-		log.Fatalf("could not start playwright: %v", err)
-	}
-	browser, err := pw.Chromium.Launch(playwright.BrowserTypeLaunchOptions{Headless: playwright.Bool(true)})
-	if err != nil {
-		log.Fatalf("could not launch browser: %v", err)
-	}
-	page, err := browser.NewPage(playwright.BrowserNewContextOptions{AcceptDownloads: playwright.Bool(true)})
-	if err != nil {
-		log.Fatalf("could not create page: %v", err)
-	}
-	if _, err = page.Goto("https://www.fakturowo.pl/logowanie", playwright.PageGotoOptions{Timeout: playwright.Float(100000)}); err != nil {
 		log.Fatalf("could not goto: %v", err)
 	}
+
 	email, err := page.QuerySelector("#email")
 	if err != nil {
 		log.Fatalf("could not get email: %v", err)
@@ -42,6 +32,23 @@ func Start(invoiceDate string) string {
 		log.Fatalf("could not get submit btn: %v", err)
 	}
 	submitBtn.Click()
+}
+
+func GetInvoice(invoiceDate string) string {
+	pw, err := playwright.Run(&playwright.RunOptions{Browsers: []string{"chromium"}})
+	if err != nil {
+		log.Fatalf("could not start playwright: %v", err)
+	}
+	browser, err := pw.Chromium.Launch(playwright.BrowserTypeLaunchOptions{Headless: playwright.Bool(false)})
+	if err != nil {
+		log.Fatalf("could not launch browser: %v", err)
+	}
+
+	page, err := browser.NewPage(playwright.BrowserNewContextOptions{AcceptDownloads: playwright.Bool(true)})
+	if err != nil {
+		log.Fatalf("could not create page: %v", err)
+	}
+	fakturowoLogin(page)
 
 	if _, err = page.Goto("https://www.fakturowo.pl/wystaw", playwright.PageGotoOptions{Timeout: playwright.Float(100000)}); err != nil {
 		log.Fatalf("could not goto: %v", err)
@@ -53,12 +60,27 @@ func Start(invoiceDate string) string {
 	// 	log.Fatalf("could not get Nazwa: %v", err)
 	// }
 	// nabywcaInput.Fill(config.Nabywca.Nazwa)
+	// Sprzedawca
+	page.Fill("#nazwa_sprzedawca", config.Sprzedawca.Nazwa)
+	page.Fill("#nip_sprzedawca", config.Sprzedawca.Nip)
+	page.Fill("#ulica_sprzedawca", config.Sprzedawca.Ulica)
+	page.Fill("#budynek_sprzedawca", config.Sprzedawca.Nr_budynku)
+	if config.Sprzedawca.Lokalu != "" {
+		page.Fill("#lokal_sprzedawca", config.Sprzedawca.Lokalu)
+	}
+	page.Fill("#miasto_sprzedawca", config.Sprzedawca.Miasto)
+	page.Fill("#kod_sprzedawca", config.Sprzedawca.Kod)
+	// Nabywca
 	page.Fill("#nazwa_nabywca", config.Nabywca.Nazwa)
 	page.Fill("#nip_nabywca", config.Nabywca.Nip)
 	page.Fill("#ulica_nabywca", config.Nabywca.Ulica)
 	page.Fill("#budynek_nabywca", config.Nabywca.Nr_budynku)
+	if config.Nabywca.Lokalu != "" {
+		page.Fill("#lokal_nabywca", config.Nabywca.Lokalu)
+	}
 	page.Fill("#miasto_nabywca", config.Nabywca.Miasto)
 	page.Fill("#kod_nabywca", config.Nabywca.Kod)
+	// Towar
 	page.Fill("#nazwa_0", config.Towar.Nazwa)
 	page.Fill("#cena_netto_0", config.Towar.Cena)
 
@@ -107,7 +129,7 @@ func Start(invoiceDate string) string {
 		download.SaveAs(downloadPath)
 		download.Delete()
 	})
-	time.Sleep(time.Second * 2)
+	time.Sleep(time.Second * 3)
 	pw.Stop()
 	return downloadPath
 }
