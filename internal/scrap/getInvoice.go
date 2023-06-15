@@ -1,8 +1,8 @@
 package scrap
 
 import (
+	"fmt"
 	"log"
-	"time"
 
 	"mygoapp/internal/config"
 
@@ -34,12 +34,12 @@ func fakturowoLogin(page playwright.Page) {
 	submitBtn.Click()
 }
 
-func GetInvoice(invoiceDate string) string {
+func GetInvoice(invoiceDate string, downloadFilePath string) {
 	pw, err := playwright.Run(&playwright.RunOptions{Browsers: []string{"chromium"}})
 	if err != nil {
 		log.Fatalf("could not start playwright: %v", err)
 	}
-	browser, err := pw.Chromium.Launch(playwright.BrowserTypeLaunchOptions{Headless: playwright.Bool(false)})
+	browser, err := pw.Chromium.Launch(playwright.BrowserTypeLaunchOptions{Headless: playwright.Bool(true)})
 	if err != nil {
 		log.Fatalf("could not launch browser: %v", err)
 	}
@@ -123,13 +123,26 @@ func GetInvoice(invoiceDate string) string {
 	page.Fill("#nodate1", invoiceDate)
 	page.Click("#pobierz_i_zapisz")
 
-	downloadPath := config.DownloadDir + "\\" + invoiceDate + "-faktura.pdf"
+	eventDone := make(chan bool)
+	// var wg sync.WaitGroup
+	// wg.Add(1)
 
 	page.On("download", func(download playwright.Download) {
-		download.SaveAs(downloadPath)
-		download.Delete()
+		// download.SaveAs blocks the execution of the function - use goroutine
+		go func() {
+			// Save the download using download.SaveAs
+			download.SaveAs(downloadFilePath)
+			fmt.Println("File downloaded: ", downloadFilePath)
+			download.Delete()
+			// Signal the completion of the download
+			// wg.Done()
+			eventDone <- true
+		}()
 	})
-	time.Sleep(time.Second * 3)
+
+	// Wait for the 'load' event to complete
+	<-eventDone
+	// wg.Wait() // Wait for the event handling to complete
+
 	pw.Stop()
-	return downloadPath
 }

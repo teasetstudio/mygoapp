@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"mygoapp/internal/config"
-	"mygoapp/internal/email"
 	"mygoapp/internal/scrap"
 	"os"
 	"path/filepath"
@@ -53,36 +52,34 @@ func RenameInvoiceContainer() *fyne.Container {
 
 	downloadFileLabel := widget.NewLabel("Download path")
 	downloadFileInput := widget.NewEntry()
-	downloadFileInput.SetText(config.DownloadDir)
+	downloadFileInput.SetText(newFile)
 
-	newFileLabel := widget.NewLabel("New file path")
-	newFileInput := widget.NewEntry()
-	newFileInput.SetText(newFile)
-
-	form := container.New(layout.NewFormLayout(), invoiceDateLabel, invoiceDateInput, downloadFileLabel, downloadFileInput, newFileLabel, newFileInput)
+	form := container.New(layout.NewFormLayout(), invoiceDateLabel, invoiceDateInput, downloadFileLabel, downloadFileInput)
 
 	btn := widget.NewButton("Save", func() {
 		invoiceDate := invoiceDateInput.Text
-		downloadedFilePath := scrap.GetInvoice(invoiceDate)
-
-		errr := os.MkdirAll(filepath.Dir(newFileInput.Text), 0755)
+		downloadFilePath := downloadFileInput.Text
+		errr := os.MkdirAll(filepath.Dir(downloadFilePath), 0755)
 		if errr != nil {
 			fmt.Println("Error creating directory:", errr)
 		}
-		err := os.Rename(downloadedFilePath, newFileInput.Text)
-		if os.IsNotExist(err) {
-			log.Println("Error: File not found")
-		}
-		if os.IsExist(err) {
-			log.Println("Error: File already exists")
-		}
-		if err != nil && !os.IsNotExist(err) && !os.IsExist(err) {
-			log.Println(err)
-		}
-		if err == nil {
-			log.Println("Success: File renamed")
-		}
-		email.SendEmailWithFile(newFileInput.Text)
+
+		scrap.GetInvoice(invoiceDate, downloadFilePath)
+
+		// err := os.Rename(downloadedFilePath, newFileInput.Text)
+		// if os.IsNotExist(err) {
+		// 	log.Println("Error: File not found")
+		// }
+		// if os.IsExist(err) {
+		// 	log.Println("Error: File already exists")
+		// }
+		// if err != nil && !os.IsNotExist(err) && !os.IsExist(err) {
+		// 	log.Println(err)
+		// }
+		// if err == nil {
+		// 	log.Println("Success: File renamed")
+		// }
+		// email.SendEmailWithFile(newFileInput.Text)
 	})
 	btnWrapper := container.New(layout.NewCenterLayout(), btn)
 
