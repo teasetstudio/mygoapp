@@ -3,42 +3,25 @@ package scrap
 import (
 	"fmt"
 	"log"
+	"os"
+	"path/filepath"
 
 	"mygoapp/internal/config"
 
 	"github.com/mxschmitt/playwright-go"
 )
 
-func fakturowoLogin(page playwright.Page) {
-	_, err := page.Goto("https://www.fakturowo.pl/logowanie", playwright.PageGotoOptions{Timeout: playwright.Float(100000)})
+func DownloadInvoice(invoiceDate string, downloadFilePath string, invoiceConfig *config.InvoiceConfigType) {
+	err := os.MkdirAll(filepath.Dir(downloadFilePath), 0755)
 	if err != nil {
-		log.Fatalf("could not goto: %v", err)
+		fmt.Println("Error creating directory:", err)
 	}
 
-	email, err := page.QuerySelector("#email")
-	if err != nil {
-		log.Fatalf("could not get email: %v", err)
-	}
-	email.Fill(config.User.Email)
-
-	pass, err := page.QuerySelector("#password")
-	if err != nil {
-		log.Fatalf("could not get password: %v", err)
-	}
-	pass.Fill(config.User.Pass)
-
-	submitBtn, err := page.QuerySelector("#form button[type=submit]")
-	if err != nil {
-		log.Fatalf("could not get submit btn: %v", err)
-	}
-	submitBtn.Click()
-}
-
-func GetInvoice(invoiceDate string, downloadFilePath string) {
 	pw, err := playwright.Run(&playwright.RunOptions{Browsers: []string{"chromium"}})
 	if err != nil {
 		log.Fatalf("could not start playwright: %v", err)
 	}
+
 	browser, err := pw.Chromium.Launch(playwright.BrowserTypeLaunchOptions{Headless: playwright.Bool(true)})
 	if err != nil {
 		log.Fatalf("could not launch browser: %v", err)
@@ -48,7 +31,8 @@ func GetInvoice(invoiceDate string, downloadFilePath string) {
 	if err != nil {
 		log.Fatalf("could not create page: %v", err)
 	}
-	fakturowoLogin(page)
+
+	fakturowoLogin(page, invoiceConfig)
 
 	if _, err = page.Goto("https://www.fakturowo.pl/wystaw", playwright.PageGotoOptions{Timeout: playwright.Float(100000)}); err != nil {
 		log.Fatalf("could not goto: %v", err)
@@ -61,28 +45,28 @@ func GetInvoice(invoiceDate string, downloadFilePath string) {
 	// }
 	// nabywcaInput.Fill(config.Nabywca.Nazwa)
 	// Sprzedawca
-	page.Fill("#nazwa_sprzedawca", config.Sprzedawca.Nazwa)
-	page.Fill("#nip_sprzedawca", config.Sprzedawca.Nip)
-	page.Fill("#ulica_sprzedawca", config.Sprzedawca.Ulica)
-	page.Fill("#budynek_sprzedawca", config.Sprzedawca.Nr_budynku)
-	if config.Sprzedawca.Lokalu != "" {
-		page.Fill("#lokal_sprzedawca", config.Sprzedawca.Lokalu)
+	page.Fill("#nazwa_sprzedawca", invoiceConfig.Sprzedawca.Nazwa)
+	page.Fill("#nip_sprzedawca", invoiceConfig.Sprzedawca.Nip)
+	page.Fill("#ulica_sprzedawca", invoiceConfig.Sprzedawca.Ulica)
+	page.Fill("#budynek_sprzedawca", invoiceConfig.Sprzedawca.Nr_budynku)
+	if invoiceConfig.Sprzedawca.Lokalu != "" {
+		page.Fill("#lokal_sprzedawca", invoiceConfig.Sprzedawca.Lokalu)
 	}
-	page.Fill("#miasto_sprzedawca", config.Sprzedawca.Miasto)
-	page.Fill("#kod_sprzedawca", config.Sprzedawca.Kod)
+	page.Fill("#miasto_sprzedawca", invoiceConfig.Sprzedawca.Miasto)
+	page.Fill("#kod_sprzedawca", invoiceConfig.Sprzedawca.Kod)
 	// Nabywca
-	page.Fill("#nazwa_nabywca", config.Nabywca.Nazwa)
-	page.Fill("#nip_nabywca", config.Nabywca.Nip)
-	page.Fill("#ulica_nabywca", config.Nabywca.Ulica)
-	page.Fill("#budynek_nabywca", config.Nabywca.Nr_budynku)
-	if config.Nabywca.Lokalu != "" {
-		page.Fill("#lokal_nabywca", config.Nabywca.Lokalu)
+	page.Fill("#nazwa_nabywca", invoiceConfig.Nabywca.Nazwa)
+	page.Fill("#nip_nabywca", invoiceConfig.Nabywca.Nip)
+	page.Fill("#ulica_nabywca", invoiceConfig.Nabywca.Ulica)
+	page.Fill("#budynek_nabywca", invoiceConfig.Nabywca.Nr_budynku)
+	if invoiceConfig.Nabywca.Lokalu != "" {
+		page.Fill("#lokal_nabywca", invoiceConfig.Nabywca.Lokalu)
 	}
-	page.Fill("#miasto_nabywca", config.Nabywca.Miasto)
-	page.Fill("#kod_nabywca", config.Nabywca.Kod)
+	page.Fill("#miasto_nabywca", invoiceConfig.Nabywca.Miasto)
+	page.Fill("#kod_nabywca", invoiceConfig.Nabywca.Kod)
 	// Towar
-	page.Fill("#nazwa_0", config.Towar.Nazwa)
-	page.Fill("#cena_netto_0", config.Towar.Cena)
+	page.Fill("#nazwa_0", invoiceConfig.Towar.Nazwa)
+	page.Fill("#cena_netto_0", invoiceConfig.Towar.Cena)
 
 	podpisCheckbox1, err := page.QuerySelector("input[name=\"sprzedawca[pokaz_podpis]\"]")
 	if err != nil {

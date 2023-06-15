@@ -9,13 +9,6 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func setYAMLConfigFile(config Config) {
-	err := SetYAMLFile(ConfigFileName, config)
-	if err != nil {
-		log.Fatalf("failed to set YAML config file: %v", err)
-	}
-}
-
 func SetYAMLFile(fileName string, data interface{}) error {
 	configFilePath := filepath.Join(AppDir, fileName)
 
@@ -34,23 +27,6 @@ func SetYAMLFile(fileName string, data interface{}) error {
 	return nil
 }
 
-func readYAMLConfigFile() {
-	data, err := ReadYAMLFile(ConfigFile)
-	if err != nil {
-		log.Fatalf("failed to read YAML config file: %v", err)
-	}
-
-	config := Config{}
-	err = yaml.Unmarshal(data, &config)
-	if err != nil {
-		log.Fatal(err)
-	}
-	Sprzedawca = config.Sprzedawca
-	Nabywca = config.Nabywca
-	Towar = config.Towar
-	User = config.User
-}
-
 func ReadYAMLFile(filename string) ([]byte, error) {
 	data, err := os.ReadFile(filename)
 	if err != nil {
@@ -58,4 +34,25 @@ func ReadYAMLFile(filename string) ([]byte, error) {
 	}
 
 	return data, nil
+}
+
+func setYAMLInvoiceConfigFile(config InvoiceConfigType) {
+	err := SetYAMLFile(ConfigFileName, config)
+	if err != nil {
+		log.Fatalf("failed to set YAML config file: %v", err)
+	}
+}
+
+func readYAMLInvoiceConfigFile() {
+	data, err := ReadYAMLFile(ConfigFile)
+	if err != nil {
+		log.Fatalf("failed to read YAML config file: %v", err)
+	}
+
+	invoiceConfig := InvoiceConfigType{}
+	err = yaml.Unmarshal(data, &invoiceConfig)
+	if err != nil {
+		log.Fatal(err)
+	}
+	InvoiceConfig = invoiceConfig
 }

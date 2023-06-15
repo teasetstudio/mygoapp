@@ -1,8 +1,9 @@
 package config
 
 import (
-	"fmt"
+	"log"
 	"os"
+	"runtime"
 )
 
 var HomeDir, _ = os.UserHomeDir()
@@ -14,16 +15,33 @@ var DownloadDir = HomeDir + "\\Downloads"
 var BusinessDir = "C:\\busines"
 
 func init() {
-	err := os.MkdirAll(AppDir, 0755)
-	if err != nil {
-		fmt.Println("Failed to create the config file:", err)
-		os.Exit(1)
-	}
+	appConfigFolderSetup()
 
 	exists, _ := FileExists(ConfigFile)
 	if exists {
-		readYAMLConfigFile()
+		readYAMLInvoiceConfigFile()
 	} else {
-		setYAMLConfigFile(DefaultConfig)
+		setYAMLInvoiceConfigFile(DefaultInvoiceConfig)
+	}
+}
+
+func appConfigFolderSetup() {
+	if runtime.GOOS == "windows" {
+		if err := os.MkdirAll(AppDir, os.ModePerm); err != nil {
+			if os.IsExist(err) {
+				// check that the existing path is a directory
+				info, err := os.Stat(AppDir)
+				if err != nil {
+					log.Fatal(err)
+				}
+				if !info.IsDir() {
+					log.Fatal("path exists but is not a directory")
+				}
+			} else {
+				log.Fatal(err)
+			}
+		}
+	} else {
+		log.Fatal("OS not supported")
 	}
 }

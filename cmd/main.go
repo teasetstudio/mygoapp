@@ -1,7 +1,11 @@
 package main
 
-import "mygoapp/internal/window"
+import (
+	"mygoapp/internal/pdf"
+	// "mygoapp/internal/window"
+)
 
 func main() {
-	window.RunUI()
+	pdf.GetDummyPDF()
+	// window.RunUI()
 }

@@ -1,8 +1,6 @@
 package window
 
 import (
-	"mygoapp/internal/invoice"
-
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
@@ -21,7 +19,7 @@ func RunUI() {
 }
 
 func getTabs() *container.AppTabs {
-	invoice := invoice.GetInvoiceContainer()
+	invoice := getInvoiceContainer()
 	tabs := container.NewAppTabs(
 		container.NewTabItem("Invoice", invoice),
 		container.NewTabItem("Config", widget.NewLabel("save json config and edit it here!")),
