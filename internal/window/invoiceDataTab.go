@@ -30,10 +30,8 @@ func invoiceDataContainer() *fyne.Container {
 		input := widget.NewEntry()
 		fieldStringValue := fmt.Sprintf("%v", fieldValue)
 		input.SetText(fieldStringValue)
-		form.AddObject(label)
-		form.AddObject(input)
-		// Print the field name and value
-		fmt.Printf("Field Name: %s, Field Value: %v\n", fieldName, fieldValue)
+		form.Add(label)
+		form.Add(input)
 	}
 	sectionCallback := func(fieldName string, fieldValue interface{}) {
 		headingLabel := widget.NewLabelWithStyle(fieldName, fyne.TextAlignCenter, fyne.TextStyle{Bold: true})
@@ -41,8 +39,8 @@ func invoiceDataContainer() *fyne.Container {
 
 		dummyLabel := widget.NewLabelWithStyle("", fyne.TextAlignLeading, fyne.TextStyle{Bold: false})
 
-		form.AddObject(headingLabel)
-		form.AddObject(dummyLabel)
+		form.Add(headingLabel)
+		form.Add(dummyLabel)
 	}
 
 	// Iterate through the fields of the struct, invoking the callback function
