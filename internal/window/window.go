@@ -4,7 +4,6 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/widget"
 )
 
 func RunUI() {
@@ -19,10 +18,11 @@ func RunUI() {
 }
 
 func getTabs() *container.AppTabs {
-	invoice := getInvoiceContainer()
+	invoiceTab := getInvoiceContainer()
+	invoiceDataTab := container.NewVScroll(getInvoiceDataContainer())
 	tabs := container.NewAppTabs(
-		container.NewTabItem("Invoice", invoice),
-		container.NewTabItem("Config", widget.NewLabel("save json config and edit it here!")),
+		container.NewTabItem("Data", invoiceDataTab),
+		container.NewTabItem("Invoice", invoiceTab),
 	)
 
 	tabs.SetTabLocation(container.TabLocationLeading)

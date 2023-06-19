@@ -7,7 +7,7 @@ import (
 	"github.com/mxschmitt/playwright-go"
 )
 
-func fakturowoLogin(page playwright.Page, invoiceConfig *config.InvoiceConfigType) {
+func fakturowoLogin(page playwright.Page, invoiceConfig *config.InvoiceDataType) {
 	_, err := page.Goto("https://www.fakturowo.pl/logowanie", playwright.PageGotoOptions{Timeout: playwright.Float(100000)})
 	if err != nil {
 		log.Fatalf("could not goto: %v", err)

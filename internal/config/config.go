@@ -9,19 +9,19 @@ import (
 var HomeDir, _ = os.UserHomeDir()
 var UserConfigDir, _ = os.UserConfigDir()
 var AppDir = UserConfigDir + "\\mygoapp"
-var ConfigFileName = "config.yaml"
-var ConfigFile = AppDir + "\\" + ConfigFileName
+var InvoiceDataFileName = "invoice_data.yaml"
+var InvoiceDataFile = AppDir + "\\" + InvoiceDataFileName
 var DownloadDir = HomeDir + "\\Downloads"
 var BusinessDir = "C:\\busines"
 
 func init() {
 	appConfigFolderSetup()
 
-	exists, _ := FileExists(ConfigFile)
+	exists, _ := FileExists(InvoiceDataFile)
 	if exists {
 		readYAMLInvoiceConfigFile()
 	} else {
-		setYAMLInvoiceConfigFile(DefaultInvoiceConfig)
+		setYAMLInvoiceDataFile(DefaultInvoiceData)
 	}
 }
 

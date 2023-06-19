@@ -11,7 +11,7 @@ import (
 	"github.com/mxschmitt/playwright-go"
 )
 
-func DownloadInvoice(invoiceDate string, downloadFilePath string, invoiceConfig *config.InvoiceConfigType) {
+func DownloadInvoice(invoiceDate string, downloadFilePath string, invoiceConfig *config.InvoiceDataType) {
 	err := os.MkdirAll(filepath.Dir(downloadFilePath), 0755)
 	if err != nil {
 		fmt.Println("Error creating directory:", err)

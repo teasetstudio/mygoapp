@@ -24,7 +24,7 @@ type user struct {
 	RecipientEmail string `yaml:"recipient_email"`
 }
 
-type InvoiceConfigType struct {
+type InvoiceDataType struct {
 	Sprzedawca firma `yaml:"sprzedawca"`
 	Nabywca    firma `yaml:"nabywca"`
 	Towar      towar `yaml:"towar"`
@@ -50,7 +50,7 @@ var Nabywca = firma{
 }
 
 var DefaultSprzedawca = firma{
-	Nazwa:      "Ivan Tichkevitch",
+	Nazwa:      "Ivan",
 	Nip:        "5833464281",
 	Ulica:      "Jana Heweliusza",
 	Nr_budynku: "11",
@@ -83,9 +83,9 @@ var Towar = towar{
 
 var DefaultUser = user{
 	Email:          "spam9000me@gmail.com",
-	Pass:           "1q2w3e1q2w3eQ1",
+	Pass:           "",
 	SenderEmail:    "ivocabulary9000@gmail.com",
-	SenderPassword: "ohfnffkbyiesjcda",
+	SenderPassword: "",
 	// RecipientEmail: "spam9000me@gmail.com",
 	RecipientEmail: "i.tichkevitch@godeltech.com",
 }
@@ -98,14 +98,14 @@ var User = user{
 	RecipientEmail: DefaultUser.RecipientEmail,
 }
 
-var DefaultInvoiceConfig = InvoiceConfigType{
+var DefaultInvoiceData = InvoiceDataType{
 	Sprzedawca: DefaultSprzedawca,
 	Nabywca:    DefaultNabywca,
 	Towar:      DefaultTowar,
 	User:       DefaultUser,
 }
 
-var InvoiceConfig = InvoiceConfigType{
+var InvoiceData = InvoiceDataType{
 	Sprzedawca: Sprzedawca,
 	Nabywca:    Nabywca,
 	Towar:      Towar,
