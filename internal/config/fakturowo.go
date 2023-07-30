@@ -50,7 +50,7 @@ var Nabywca = firma{
 }
 
 var DefaultSprzedawca = firma{
-	Nazwa:      "Ivan",
+	Nazwa:      "Ivan Tichkevitch",
 	Nip:        "5833464281",
 	Ulica:      "Jana Heweliusza",
 	Nr_budynku: "11",
