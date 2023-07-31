@@ -19,9 +19,9 @@ func init() {
 
 	exists, _ := FileExists(InvoiceDataFile)
 	if exists {
-		readYAMLInvoiceConfigFile()
+		ReadYAMLInvoiceConfigFile()
 	} else {
-		setYAMLInvoiceDataFile(DefaultInvoiceData)
+		SetYAMLInvoiceDataFile(DefaultInvoiceData)
 	}
 }
 

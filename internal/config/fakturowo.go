@@ -16,7 +16,7 @@ type towar struct {
 	Cena  string `yaml:"cena"`
 }
 
-type user struct {
+type UserType struct {
 	Email          string `yaml:"email"`
 	Pass           string `yaml:"pass"`
 	SenderEmail    string `yaml:"sender_email"`
@@ -25,10 +25,10 @@ type user struct {
 }
 
 type InvoiceDataType struct {
-	Sprzedawca firma `yaml:"sprzedawca"`
-	Nabywca    firma `yaml:"nabywca"`
-	Towar      towar `yaml:"towar"`
-	User       user  `yaml:"user"`
+	Sprzedawca firma    `yaml:"sprzedawca"`
+	Nabywca    firma    `yaml:"nabywca"`
+	Towar      towar    `yaml:"towar"`
+	User       UserType `yaml:"user"`
 }
 
 var DefaultNabywca = firma{
@@ -81,7 +81,7 @@ var Towar = towar{
 	Cena:  DefaultTowar.Cena,
 }
 
-var DefaultUser = user{
+var DefaultUser = UserType{
 	Email:          "spam9000me@gmail.com",
 	Pass:           "",
 	SenderEmail:    "ivocabulary9000@gmail.com",
@@ -90,7 +90,7 @@ var DefaultUser = user{
 	RecipientEmail: "i.tichkevitch@godeltech.com",
 }
 
-var User = user{
+var User = UserType{
 	Email:          DefaultUser.Email,
 	Pass:           DefaultUser.Pass,
 	SenderEmail:    DefaultUser.SenderEmail,

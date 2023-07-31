@@ -21,8 +21,8 @@ func getTabs() *container.AppTabs {
 	invoiceTab := getInvoiceContainer()
 	invoiceDataTab := container.NewVScroll(getInvoiceDataContainer())
 	tabs := container.NewAppTabs(
-		container.NewTabItem("Data", invoiceDataTab),
 		container.NewTabItem("Invoice", invoiceTab),
+		container.NewTabItem("Data", invoiceDataTab),
 	)
 
 	tabs.SetTabLocation(container.TabLocationLeading)

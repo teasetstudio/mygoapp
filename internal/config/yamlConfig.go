@@ -36,14 +36,14 @@ func ReadYAMLFile(filename string) ([]byte, error) {
 	return data, nil
 }
 
-func setYAMLInvoiceDataFile(data InvoiceDataType) {
+func SetYAMLInvoiceDataFile(data InvoiceDataType) {
 	err := SetYAMLFile(InvoiceDataFileName, data)
 	if err != nil {
 		log.Fatalf("failed to set YAML config file: %v", err)
 	}
 }
 
-func readYAMLInvoiceConfigFile() {
+func ReadYAMLInvoiceConfigFile() {
 	data, err := ReadYAMLFile(InvoiceDataFile)
 	if err != nil {
 		log.Fatalf("failed to read YAML config file: %v", err)

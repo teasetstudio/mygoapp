@@ -29,16 +29,16 @@ import (
 // base64.StdEncoding.EncodeToString. This ensures that the attachment is correctly represented
 // in the email message.
 
-func SendFile(filePath string) {
+func SendFile(filePath string, userConfig *config.UserType) {
 	// SMTP server configuration
 	smtpHost := "smtp.gmail.com"
 	smtpPort := 587
-	smtpUsername := config.User.SenderEmail
-	smtpPassword := config.User.SenderPassword
+	smtpUsername := userConfig.SenderEmail
+	smtpPassword := userConfig.SenderPassword
 
 	// Sender and recipient email addresses
-	from := config.User.SenderEmail
-	to := config.User.RecipientEmail
+	from := userConfig.SenderEmail
+	to := userConfig.RecipientEmail
 
 	// Create the email message
 	subject := "Email with PDF attachment"

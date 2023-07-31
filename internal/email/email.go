@@ -7,13 +7,13 @@ import (
 	"net/smtp"
 )
 
-func SendEmail() {
+func SendEmail(userConfig config.UserType) {
 	// Sender's email address and password
-	senderEmail := config.User.SenderEmail
-	senderPassword := config.User.SenderPassword
+	senderEmail := userConfig.SenderEmail
+	senderPassword := userConfig.SenderPassword
 
 	// Recipient's email address
-	recipientEmail := config.User.RecipientEmail
+	recipientEmail := userConfig.RecipientEmail
 
 	// SMTP server configuration
 	smtpHost := "smtp.gmail.com"

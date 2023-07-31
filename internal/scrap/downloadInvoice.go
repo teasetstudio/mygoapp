@@ -31,9 +31,7 @@ func DownloadInvoice(invoiceDate string, downloadFilePath string, invoiceConfig 
 	if err != nil {
 		log.Fatalf("could not create page: %v", err)
 	}
-
 	fakturowoLogin(page, invoiceConfig)
-
 	if _, err = page.Goto("https://www.fakturowo.pl/wystaw", playwright.PageGotoOptions{Timeout: playwright.Float(100000)}); err != nil {
 		log.Fatalf("could not goto: %v", err)
 	}
@@ -110,7 +108,7 @@ func DownloadInvoice(invoiceDate string, downloadFilePath string, invoiceConfig 
 	eventDone := make(chan bool)
 	// var wg sync.WaitGroup
 	// wg.Add(1)
-
+	println("dowloading")
 	page.On("download", func(download playwright.Download) {
 		// download.SaveAs blocks the execution of the function - use goroutine
 		go func() {
@@ -125,6 +123,7 @@ func DownloadInvoice(invoiceDate string, downloadFilePath string, invoiceConfig 
 	})
 
 	// Wait for the 'load' event to complete
+	println("dowloaded")
 	<-eventDone
 	// wg.Wait() // Wait for the event handling to complete
 

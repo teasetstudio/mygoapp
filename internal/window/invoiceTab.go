@@ -40,7 +40,8 @@ func invoiceContainer() *fyne.Container {
 		downloadFilePath := downloadFileInput.Text
 
 		scrap.DownloadInvoice(invoiceDate, downloadFilePath, &config.InvoiceData)
-		email.SendFile(downloadFilePath)
+		println("email")
+		email.SendFile(downloadFilePath, &config.InvoiceData.User)
 	})
 	btnWrapper := container.New(layout.NewCenterLayout(), btn)
 

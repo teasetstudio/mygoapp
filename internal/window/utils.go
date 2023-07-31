@@ -50,3 +50,42 @@ func iterateStructFields(
 		}
 	}
 }
+
+func createStructFromSlice(slice []string, structType reflect.Type) (reflect.Value, []string) {
+	structValue := reflect.New(structType).Elem()
+	localSlice := slice
+
+	// For each field in the struct, check if it's a nested struct and recursively create it
+	for i := 0; i < structValue.NumField() && i < len(slice); i++ {
+		field := structValue.Field(i)
+		fieldType := structType.Field(i).Type
+		if fieldType.Kind() == reflect.Struct {
+			// Nested struct, recursively create it
+			nestedStruct, curSlice := createStructFromSlice(localSlice, fieldType)
+			localSlice = curSlice
+			field.Set(nestedStruct)
+		} else {
+			// Convert the slice element to the appropriate type and set the value
+			sliceValue := reflect.ValueOf(localSlice[0])
+			convertedValue := convertStringToType(sliceValue, fieldType)
+			field.Set(convertedValue)
+			localSlice = localSlice[1:]
+		}
+	}
+
+	return structValue, localSlice
+}
+
+func convertStringToType(value reflect.Value, targetType reflect.Type) reflect.Value {
+	switch targetType.Kind() {
+	case reflect.String:
+		return value.Convert(targetType)
+	case reflect.Int:
+		// Handle int parsing from string
+		intValue, _ := strconv.Atoi(value.String())
+		return reflect.ValueOf(intValue).Convert(targetType)
+	// Add more cases for other data types as needed
+	default:
+		return reflect.Zero(targetType)
+	}
+}
