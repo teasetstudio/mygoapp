@@ -35,13 +35,11 @@ func invoiceDataContainer() *fyne.Container {
 		form.Add(label)
 		form.Add(input)
 	}
-	sectionCallback := func(fieldName string, fieldValue interface{}) {
 
+	sectionCallback := func(fieldName string, fieldValue interface{}) {
 		headingLabel := widget.NewLabelWithStyle(fieldName, fyne.TextAlignCenter, fyne.TextStyle{Bold: true})
 		headingLabel.TextStyle = fyne.TextStyle{Bold: true}
-
 		dummyLabel := widget.NewLabelWithStyle("", fyne.TextAlignLeading, fyne.TextStyle{Bold: false})
-
 		form.Add(headingLabel)
 		form.Add(dummyLabel)
 	}

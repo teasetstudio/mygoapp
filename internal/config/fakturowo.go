@@ -1,6 +1,6 @@
 package config
 
-type firma struct {
+type Firma struct {
 	Nazwa      string `yaml:"nazwa"`
 	Nip        string `yaml:"nip"`
 	Ulica      string `yaml:"ulica"`
@@ -11,9 +11,11 @@ type firma struct {
 	Konta      string `yaml:"konta"`
 }
 
-type towar struct {
-	Nazwa string `yaml:"nazwa"`
-	Cena  string `yaml:"cena"`
+type TowarType struct {
+	Nazwa  string  `yaml:"nazwa"`
+	Cena   float64 `yaml:"cena"`
+	Amount int     `yaml:"amount"`
+	Vat    int     `yaml:"vat"`
 }
 
 type UserType struct {
@@ -25,13 +27,13 @@ type UserType struct {
 }
 
 type InvoiceDataType struct {
-	Sprzedawca firma    `yaml:"sprzedawca"`
-	Nabywca    firma    `yaml:"nabywca"`
-	Towar      towar    `yaml:"towar"`
-	User       UserType `yaml:"user"`
+	Sprzedawca Firma     `yaml:"sprzedawca"`
+	Nabywca    Firma     `yaml:"nabywca"`
+	Towar      TowarType `yaml:"towar"`
+	User       UserType  `yaml:"user"`
 }
 
-var DefaultNabywca = firma{
+var DefaultNabywca = Firma{
 	Nazwa:      "GODEL TECHNOLOGIES EUROPE SPÓŁKA ZOGRANICZONĄ ODPOWIEDZIALNOŚCIĄ",
 	Nip:        "7252307374",
 	Ulica:      "Ogrodowa",
@@ -40,7 +42,7 @@ var DefaultNabywca = firma{
 	Kod:        "91-062",
 }
 
-var Nabywca = firma{
+var Nabywca = Firma{
 	Nazwa:      DefaultNabywca.Nazwa,
 	Nip:        DefaultNabywca.Nip,
 	Ulica:      DefaultNabywca.Ulica,
@@ -49,7 +51,7 @@ var Nabywca = firma{
 	Kod:        DefaultNabywca.Kod,
 }
 
-var DefaultSprzedawca = firma{
+var DefaultSprzedawca = Firma{
 	Nazwa:      "Ivan Tichkevitch",
 	Nip:        "5833464281",
 	Ulica:      "Jana Heweliusza",
@@ -60,7 +62,7 @@ var DefaultSprzedawca = firma{
 	Konta:      "40 1020 1811 0000 0202 0416 4158",
 }
 
-var Sprzedawca = firma{
+var Sprzedawca = Firma{
 	Nazwa:      DefaultSprzedawca.Nazwa,
 	Nip:        DefaultSprzedawca.Nip,
 	Ulica:      DefaultSprzedawca.Ulica,
@@ -71,21 +73,25 @@ var Sprzedawca = firma{
 	Konta:      DefaultSprzedawca.Konta,
 }
 
-var DefaultTowar = towar{
-	Nazwa: "Software development services",
-	Cena:  "19000",
+var DefaultTowar = TowarType{
+	Nazwa:  "Software development services",
+	Cena:   19000.00,
+	Amount: 1,
+	Vat:    23,
 }
 
-var Towar = towar{
-	Nazwa: DefaultTowar.Nazwa,
-	Cena:  DefaultTowar.Cena,
+var Towar = TowarType{
+	Nazwa:  DefaultTowar.Nazwa,
+	Cena:   DefaultTowar.Cena,
+	Amount: DefaultTowar.Amount,
+	Vat:    DefaultTowar.Vat,
 }
 
 var DefaultUser = UserType{
 	Email:          "spam9000me@gmail.com",
 	Pass:           "",
 	SenderEmail:    "ivocabulary9000@gmail.com",
-	SenderPassword: "",
+	SenderPassword: "ohfnffkbyiesjcda",
 	// RecipientEmail: "spam9000me@gmail.com",
 	RecipientEmail: "i.tichkevitch@godeltech.com",
 }

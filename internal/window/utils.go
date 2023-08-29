@@ -84,6 +84,10 @@ func convertStringToType(value reflect.Value, targetType reflect.Type) reflect.V
 		// Handle int parsing from string
 		intValue, _ := strconv.Atoi(value.String())
 		return reflect.ValueOf(intValue).Convert(targetType)
+	case reflect.Float64:
+		// Handle float64 parsing from string
+		floatValue, _ := strconv.ParseFloat(value.String(), 64) // Consider handling error
+		return reflect.ValueOf(floatValue).Convert(targetType)
 	// Add more cases for other data types as needed
 	default:
 		return reflect.Zero(targetType)

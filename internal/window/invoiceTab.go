@@ -3,6 +3,7 @@ package window
 import (
 	"mygoapp/internal/config"
 	"mygoapp/internal/email"
+	"mygoapp/internal/pdf"
 	"mygoapp/internal/scrap"
 
 	"fyne.io/fyne/v2"
@@ -39,8 +40,10 @@ func invoiceContainer() *fyne.Container {
 		invoiceDate := invoiceDateInput.Text
 		downloadFilePath := downloadFileInput.Text
 
-		scrap.DownloadInvoice(invoiceDate, downloadFilePath, &config.InvoiceData)
-		println("email")
+		pdf.GetPdfInvoice(invoiceDate, downloadFilePath, &config.InvoiceData)
+		if false {
+			scrap.DownloadInvoice(invoiceDate, downloadFilePath, &config.InvoiceData)
+		}
 		email.SendFile(downloadFilePath, &config.InvoiceData.User)
 	})
 	btnWrapper := container.New(layout.NewCenterLayout(), btn)
