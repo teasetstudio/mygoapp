@@ -6,15 +6,17 @@ import (
 	"fyne.io/fyne/v2/container"
 )
 
+var mainWindow fyne.Window
+
 func RunUI() {
 	a := app.New()
-	w := a.NewWindow("Hello World")
-	w.Resize(fyne.NewSize(600, 400))
+	mainWindow = a.NewWindow("Hello World")
+	mainWindow.Resize(fyne.NewSize(600, 400))
 
 	tabs := getTabs()
 
-	w.SetContent(tabs)
-	w.ShowAndRun()
+	mainWindow.SetContent(tabs)
+	mainWindow.ShowAndRun()
 }
 
 func getTabs() *container.AppTabs {

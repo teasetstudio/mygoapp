@@ -24,12 +24,12 @@ func setSprzedawca(pdf *gofpdf.Fpdf, firma config.Firma) float64 {
 	title := "Sprzedawca:"
 	x, y := pdf.GetXY()
 
-	pdf.SetFont("DejaVu", "B", 12)
+	pdf.SetFont(primaryFontFamily, "B", 12)
 	pdf.SetTextColor(primary())
 	pdf.Text(x, y, title)
 
 	y += 2
-	pdf.SetFont("DejaVu", "", 11)
+	pdf.SetFont(primaryFontFamily, "", 11)
 	pdf.SetTextColor(darkgray())
 	y = drawMultiLineText(pdf, firma.Nazwa, 35, 5, x, y, false)
 
@@ -57,12 +57,12 @@ func setNabywca(pdf *gofpdf.Fpdf, firma config.Firma) float64 {
 	title := "Nabywca:"
 	_, y := pdf.GetXY()
 	x := getX_RightAlingedText(pdf, title, offsetX-3)
-	pdf.SetFont("DejaVu", "B", 12)
+	pdf.SetFont(primaryFontFamily, "B", 12)
 	pdf.SetTextColor(primary())
 	pdf.Text(x, y, title)
 
 	y += 2
-	pdf.SetFont("DejaVu", "", 11)
+	pdf.SetFont(primaryFontFamily, "", 11)
 	pdf.SetTextColor(darkgray())
 	y = drawMultiLineText(pdf, firma.Nazwa, 35, 5, offsetX, y, true)
 

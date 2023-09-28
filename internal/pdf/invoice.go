@@ -1,8 +1,6 @@
 package pdf
 
 import (
-	"log"
-
 	"mygoapp/internal/config"
 	pdf_invoice "mygoapp/internal/pdf/invoice"
 )
@@ -13,8 +11,9 @@ func GetPdfInvoice(invoiceDate string, downloadFilePath string, invoiceConfig *c
 	if downloadFilePath == "" {
 		downloadFilePath = "invoice.pdf"
 	}
+
 	err := invoice.OutputFileAndClose(downloadFilePath)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 }

@@ -13,6 +13,7 @@ var InvoiceDataFileName = "invoice_data.yaml"
 var InvoiceDataFile = AppDir + "\\" + InvoiceDataFileName
 var DownloadDir = HomeDir + "\\Downloads"
 var BusinessDir = "C:\\busines"
+var FontsDir = "C:\\Windows\\Fonts"
 
 func init() {
 	appConfigFolderSetup()

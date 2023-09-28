@@ -3,7 +3,7 @@ package pdf_invoice
 import "github.com/jung-kurt/gofpdf"
 
 func setFooter(pdf *gofpdf.Fpdf, sum string, sumText string, konta string) {
-	pdf.SetFont("DejaVu", "", 16)
+	pdf.SetFont(primaryFontFamily, "", 16)
 	pdf.SetTextColor(darkgray())
 	text := "Do zapłaty " + sum + " PLN"
 	initX, initY := pdf.GetXY()
@@ -31,7 +31,7 @@ func setFooter(pdf *gofpdf.Fpdf, sum string, sumText string, konta string) {
 	pdf.Text(x, y, text)
 	y += 8
 	x -= 6
-	pdf.SetFont("DejaVu", "", 8)
+	pdf.SetFont(primaryFontFamily, "", 8)
 	pdf.SetTextColor(primary())
 	pdf.Text(x, y, "Słownie")
 
@@ -58,7 +58,7 @@ func setFooter(pdf *gofpdf.Fpdf, sum string, sumText string, konta string) {
 	pdf.Text(x, y, konta)
 
 	// Pages
-	pdf.SetFont("DejaVu", "", 10)
+	pdf.SetFont(primaryFontFamily, "", 10)
 	pdf.SetTextColor(gray())
 	pdf.Text(195, 292, "1 / 1")
 }

@@ -3,7 +3,7 @@ package pdf_invoice
 import "github.com/jung-kurt/gofpdf"
 
 func setDates(pdf *gofpdf.Fpdf, issueDate string, saleDate string) {
-	pdf.SetFont("DejaVu", "", 11)
+	pdf.SetFont(primaryFontFamily, "", 11)
 	pdf.SetTextColor(darkgray())
 
 	x, y := pdf.GetXY()

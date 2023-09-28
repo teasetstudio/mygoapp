@@ -6,7 +6,7 @@ import (
 
 func setInvoiceTable(pdf *gofpdf.Fpdf, content [][]string, summaryContent [][]string) {
 	// HEADER ROW
-	pdf.SetFont("DejaVu", "", 9)
+	pdf.SetFont(primaryFontFamily, "", 9)
 	pdf.SetTextColor(white())
 	x, y := pdf.GetXY()
 	y += 15
@@ -51,7 +51,7 @@ func setInvoiceTable(pdf *gofpdf.Fpdf, content [][]string, summaryContent [][]st
 }
 
 func setInvoiceTableSummary(pdf *gofpdf.Fpdf, content [][]string) {
-	pdf.SetFont("DejaVu", "", 9)
+	pdf.SetFont(primaryFontFamily, "", 9)
 	pdf.SetTextColor(darkgray())
 	cellOffset, leftColWidths := getCellOffset(3, colWidths)
 	for _, row := range content {

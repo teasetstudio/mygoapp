@@ -1,9 +1,12 @@
 package window
 
 import (
+	"fmt"
 	"reflect"
 	"strconv"
 	"time"
+
+	"fyne.io/fyne/v2/dialog"
 )
 
 func getInvoiceDate() (string, string, string, string) {
@@ -92,4 +95,15 @@ func convertStringToType(value reflect.Value, targetType reflect.Type) reflect.V
 	default:
 		return reflect.Zero(targetType)
 	}
+}
+
+func recoverDialog() {
+	if r := recover(); r != nil {
+		str := fmt.Sprint(r)
+		showDialog("Error", str)
+	}
+}
+
+func showDialog(title string, message string) {
+	dialog.ShowInformation(title, message, mainWindow)
 }

@@ -1,19 +1,18 @@
 package pdf_invoice
 
 import (
-	"fmt"
 	"mygoapp/internal/config"
 
 	"github.com/jung-kurt/gofpdf"
 )
 
 func GetPdfInvoice(invoiceDate string, invoiceConfig *config.InvoiceDataType) *gofpdf.Fpdf {
-	fontsPath := getFontFolder()
+	isFontsInstalled()
 
-	pdf := gofpdf.New("P", "mm", "A4", fontsPath)
+	pdf := gofpdf.New("P", "mm", "A4", config.FontsDir)
 	pdf.AddPage()
-	pdf.AddUTF8Font("DejaVu", "", "DejaVuSansCondensed.ttf")
-	pdf.AddUTF8Font("DejaVu", "B", "DejaVuSansCondensed-Bold.ttf")
+	pdf.AddUTF8Font(primaryFontFamily, "", fontfileNames[0])
+	pdf.AddUTF8Font(primaryFontFamily, "B", fontfileNames[1])
 
 	var products []config.TowarType
 	products = append(products, invoiceConfig.Towar)
@@ -23,7 +22,7 @@ func GetPdfInvoice(invoiceDate string, invoiceConfig *config.InvoiceDataType) *g
 
 	invoiceNr, err := getLastDayOfMonth(invoiceDate)
 	if err != nil {
-		fmt.Printf("'%s' does not match the format 'DD-MM-YYYY'. Error: %v\n", invoiceDate, err)
+		panic("does not match the format")
 	}
 
 	dataWystawienia := invoiceNr

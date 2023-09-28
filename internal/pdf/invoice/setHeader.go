@@ -4,7 +4,7 @@ import "github.com/jung-kurt/gofpdf"
 
 func setHeader(pdf *gofpdf.Fpdf, invoiceNr string) {
 	drawBackground(pdf)
-	pdf.SetFont("DejaVu", "B", 30)
+	pdf.SetFont(primaryFontFamily, "B", 30)
 	pdf.SetTextColor(white())
 
 	initX, initY := pdf.GetXY()
@@ -13,7 +13,7 @@ func setHeader(pdf *gofpdf.Fpdf, invoiceNr string) {
 
 	pdf.Text(x, y, "FAKTURA")
 
-	pdf.SetFont("DejaVu", "B", 14)
+	pdf.SetFont(primaryFontFamily, "B", 14)
 	pdf.SetTextColor(primary())
 	numberText := "Nr: " + invoiceNr
 	x = getDefaultX_RightAlingedText(pdf, numberText)

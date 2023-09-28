@@ -2,6 +2,7 @@ package pdf_invoice
 
 import (
 	"fmt"
+	"mygoapp/internal/config"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -10,6 +11,9 @@ import (
 
 	"github.com/jung-kurt/gofpdf"
 )
+
+var primaryFontFamily = "DejaVu"
+var fontfileNames = []string{"DejaVuSansCondensed.ttf", "DejaVuSansCondensed-Bold.ttf"}
 
 func darkgray() (int, int, int) {
 	return 70, 70, 70
@@ -35,16 +39,6 @@ func white() (int, int, int) {
 	return 250, 250, 250
 }
 
-func getFontFolder() string {
-	dir, err := os.Getwd()
-	if err != nil {
-		fmt.Println("Error:", err)
-		return ""
-	}
-	fontPath := filepath.Join(dir, "fonts")
-	return fontPath
-}
-
 func drawMultiLineText(pdf *gofpdf.Fpdf, text string, maxLenght int, offset float64, x float64, y float64, isAlignRight bool) float64 {
 	lines := splitString(text, maxLenght)
 	for _, line := range lines {
@@ -56,6 +50,25 @@ func drawMultiLineText(pdf *gofpdf.Fpdf, text string, maxLenght int, offset floa
 		pdf.Text(xx, y, line)
 	}
 	return y
+}
+
+func isFontsInstalled() {
+	missingFonts := []string{}
+	for _, fontName := range fontfileNames {
+		fontPath := filepath.Join(config.FontsDir, fontName)
+		if !isFileExists(fontPath) {
+			missingFonts = append(missingFonts, fontName)
+		}
+	}
+	if len(missingFonts) > 0 {
+		message := fmt.Sprintf("The following fonts are missing: %s", strings.Join(missingFonts, ", "))
+		panic(message)
+	}
+}
+
+func isFileExists(path string) bool {
+	_, err := os.Stat(path)
+	return !os.IsNotExist(err)
 }
 
 func getX_RightAlingedText(pdf *gofpdf.Fpdf, text string, initX float64) float64 {
